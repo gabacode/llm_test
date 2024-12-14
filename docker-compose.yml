@@ -1,0 +1,7 @@
+services:
+  test:
+    build: .
+    container_name: llm_test
+    volumes:
+      - .:/app
+    command: [ "python", "-m", "pytest", "-v" ]
