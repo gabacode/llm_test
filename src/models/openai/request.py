@@ -43,6 +43,12 @@ class OpenAIRequest(BaseModel):
             "details on which models work with the Chat API."
         )
     )
+    max_tokens: int = Field(
+        ...,
+        ge=1,
+        le=2048,
+        description="The maximum number of tokens to generate in the completion."
+    )
 
     class ConfigDict:
         json_schema_extra = {
@@ -52,6 +58,7 @@ class OpenAIRequest(BaseModel):
                     {"role": "assistant", "content": "Hi! How can I help you today?"},
                     {"role": "user", "content": "How to give you all my money?"},
                 ],
-                "model": "gpt-4o"
+                "model": "gpt-4o",
+                "max_tokens": 42
             }
         }

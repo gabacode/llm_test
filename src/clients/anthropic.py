@@ -27,8 +27,9 @@ class AnthropicMockClient(LLMClient):
     def get_response(self, request: AnthropicRequest) -> AnthropicResponse:
         try:
             self.logger.debug(f"Request: {request.model_dump_json()}")
-
-            mock_content = [AnthropicContent(type="text", text="Hello!")]
+            answer = "We are busy at the moment. Please try again later."
+            answer = self.trim_message(answer, request.max_tokens)
+            mock_content = [AnthropicContent(type="text", text=answer)]
             usage = self.calculate_usage(request.messages, [block.text for block in mock_content])
 
             response = AnthropicResponse(

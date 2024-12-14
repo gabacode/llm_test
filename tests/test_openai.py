@@ -40,7 +40,8 @@ def test_request_model_validation(model_input, expected_error):
     with pytest.raises(ValidationError, match=expected_error):
         OpenAIRequest(
             messages=[OpenAIMessage(role="user", content="Hello!")],
-            model=model_input  # noqa
+            model=model_input,  # noqa
+            max_tokens=42
         )
 
 
@@ -56,7 +57,8 @@ def test_message_structure_validation(message, expected_error):
     with pytest.raises(ValidationError, match=expected_error):
         OpenAIRequest(
             messages=[OpenAIMessage(**message)],
-            model="gpt-4"
+            model="gpt-4",
+            max_tokens=42
         )
 
 
@@ -71,7 +73,24 @@ def test_request_messages_validation(messages, expected_error):
     with pytest.raises(ValidationError, match=expected_error):
         OpenAIRequest(
             messages=messages,  # noqa
-            model="gpt-4"
+            model="gpt-4",
+            max_tokens=42
+        )
+
+
+@pytest.mark.parametrize(
+    "max_tokens,expected_error",
+    [
+        (-1, r"Input should be greater than or equal to 1"),  # Invalid max_tokens
+        (2049, r"Input should be less than or equal to 2048"),  # Invalid max_tokens
+    ]
+)
+def test_request_max_tokens_validation(max_tokens, expected_error):
+    with pytest.raises(ValidationError, match=expected_error):
+        OpenAIRequest(
+            messages=[OpenAIMessage(role="user", content="Hello!")],
+            model="gpt-4",
+            max_tokens=max_tokens
         )
 
 
@@ -174,7 +193,8 @@ def test_client_request_validation(client, request_kwargs, expected_exception):
 def test_valid_request(client):
     valid_request = OpenAIRequest(
         messages=[OpenAIMessage(role="user", content="Hello!")],
-        model="gpt-4"
+        model="gpt-4",
+        max_tokens=42
     )
     valid_response = client.get_response(valid_request)
 

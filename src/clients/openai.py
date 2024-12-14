@@ -28,6 +28,7 @@ class OpenAIMockClient(LLMClient):
         try:
             self.logger.debug(f"Request: {request.model_dump_json()}")
             answer = "I didn't understand that. Can you please join our premium program?"
+            answer = self.trim_message(answer, request.max_tokens)
             usage = self.calculate_usage(request.messages, answer)
 
             response = OpenAIResponse(

@@ -47,6 +47,12 @@ class AnthropicRequest(BaseModel):
         le=1.0,
         description="The degree of randomness in the model's output. Range: 0.0 to 1.0."
     )
+    max_tokens: int = Field(
+        ...,
+        ge=1,
+        le=2048,
+        description="The maximum number of tokens to generate in the completion."
+    )
 
     class ConfigDict:
         json_schema_extra = {
@@ -59,5 +65,6 @@ class AnthropicRequest(BaseModel):
                     {"role": "user", "content": "I was looking for your swagger but could not find it!"},
                 ],
                 "temperature": 0.7,
+                "max_tokens": 42
             }
         }

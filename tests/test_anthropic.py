@@ -42,7 +42,8 @@ def test_request_model_validation(model_input, expected_error):
             messages=[AnthropicMessage(role="user", content="Hello!")],
             model=model_input,  # noqa
             system="",
-            temperature=0
+            temperature=0,
+            max_tokens=42
         )
 
 
@@ -59,7 +60,8 @@ def test_request_messages_validation(message, expected_error):
             messages=message,
             model="claude-3-5-sonnet-20241022",
             system="",
-            temperature=0
+            temperature=0,
+            max_tokens=42
         )
 
 
@@ -76,7 +78,8 @@ def test_message_structure_validation(message_structure, expected_error):
             messages=[AnthropicMessage(**message_structure)],
             model="claude-3-5-sonnet-20241022",
             system="",
-            temperature=0
+            temperature=0,
+            max_tokens=42
         )
 
 
@@ -94,7 +97,26 @@ def test_temperature_validation(temperature_value, expected_error):
             messages=[AnthropicMessage(role="user", content="Hello!")],
             model="claude-3-5-sonnet-20241022",
             system="",
-            temperature=temperature_value
+            temperature=temperature_value,
+            max_tokens=42
+        )
+
+
+@pytest.mark.parametrize(
+    "max_tokens,expected_error",
+    [
+        (-1, r"Input should be greater than or equal to 1"),  # Invalid max_tokens
+        (2049, r"Input should be less than or equal to 2048"),  # Invalid max_tokens
+    ]
+)
+def test_request_max_tokens_validation(max_tokens, expected_error):
+    with pytest.raises(ValidationError, match=expected_error):
+        AnthropicRequest(
+            messages=[AnthropicMessage(role="user", content="Hello!")],
+            model="claude-3-5-sonnet-20241022",
+            system="",
+            temperature=0,
+            max_tokens=max_tokens
         )
 
 
@@ -132,7 +154,8 @@ def test_valid_request(client):
         messages=[AnthropicMessage(role="user", content="Hello!")],
         model="claude-3-5-sonnet-20241022",
         system="You are Claudio",
-        temperature=0
+        temperature=0,
+        max_tokens=42
     )
     response = client.get_response(valid_request)
 

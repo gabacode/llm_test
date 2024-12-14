@@ -27,3 +27,7 @@ class LLMClient(ABC):
     @abstractmethod
     def handle_error(self, error: Exception, message: str) -> None:
         pass
+
+    @staticmethod
+    def trim_message(message: str, max_tokens: int) -> str:
+        return " ".join(message.split()[:max_tokens])
